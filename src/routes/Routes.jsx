@@ -5,6 +5,7 @@ import Dashboard from '../components/Dashboard';
 import Add from './../pages/Add';
 import Recorded from './../pages/Recorded';
 import Edit from '../pages/Edit';
+import Nothing from './../pages/Recorded';
 
 const Routes = () => {
     const route = new createBrowserRouter([

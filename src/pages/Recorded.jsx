@@ -4,6 +4,8 @@ import axios from "axios";
 import { BiMessageSquareEdit } from "react-icons/bi";
 import { RiDeleteBack2Line } from "react-icons/ri";
 import { Link } from "react-router-dom";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+
 const Recorded = () => {
   const [openModal, setOpenModal] = useState(false);
   const { data: tasks = [], refetch } = useQuery({
@@ -24,139 +26,210 @@ const Recorded = () => {
       });
   };
 
-  // update task
-  const handleUpdateTask = async (id) => {};
+  // Handle drag and drop
+  const onDragEnd = (result) => {
+    const { destination, source, draggableId } = result;
 
-  // add task
-  const handleAddTask = async (title, description, category) => {
-    await axios
-      .post(`${import.meta.env.VITE_URL}/tasks`, {
-        title,
-        description,
-        category,
-      })
-      .then((res) => {
-        console.log(res.data);
+    if (!destination) {
+      return;
+    }
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    // Find the task that was dragged
+    const task = tasks.find((task) => task._id === draggableId);
+
+    // Update the category of the task
+    task.category = destination.droppableId;
+
+    // Update the task on the server
+    axios
+      .put(`${import.meta.env.VITE_URL}/tasks/${draggableId}`, task)
+      .then(() => {
         refetch();
       });
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 mt-10 gap-5">
-      {/* To-Do Section */}
-      <div className="w-full">
-        <h1 className="bg-yellow-200 text-center py-2 font-bold rounded-md">
-          To-Do
-        </h1>
-        <div className="my-2 space-y-3 cursor-pointer">
-          {tasks
-            .filter((task) => task.category === "To-Do")
-            .map((task) => (
-              <div
-                key={task.taskID}
-                className="bg-yellow-100 p-4 rounded-lg shadow-md"
-              >
-                <h2 className="text-lg font-semibold">{task.title}</h2>
-                <p className="text-sm text-gray-600">{task.description}</p>
-                <p className="text-xs text-gray-500">{task.timestamp}</p>
-                <div className="space-x-2 mt-2">
-                  <button>
-                    {" "}
-                    <Link
-                      to={`/dashboard/recorded-task/${task._id}`}
-                      className="cursor-pointer"
+    <DragDropContext onDragEnd={onDragEnd}>
+      <div className="grid grid-cols-1 md:grid-cols-3 mt-10 gap-5">
+        {/* To-Do Section */}
+        <Droppable droppableId="To-Do">
+          {(provided) => (
+            <div
+              className="w-full"
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              <h1 className="bg-yellow-200 text-center py-2 font-bold rounded-md">
+                To-Do
+              </h1>
+              <div className="my-2 space-y-3 cursor-pointer">
+                {tasks
+                  .filter((task) => task.category === "To-Do")
+                  .map((task, index) => (
+                    <Draggable
+                      key={task._id}
+                      draggableId={task._id}
+                      index={index}
                     >
-                      <BiMessageSquareEdit size={25} />
-                    </Link>
-                  </button>
-                  <button
-                    className="cursor-pointer"
-                    onClick={() => handelDeleteTask(task._id)}
-                  >
-                    <RiDeleteBack2Line size={25} className="text-red-500" />
-                  </button>
-                </div>
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className="bg-yellow-100 p-4 rounded-lg shadow-md"
+                        >
+                          <h2 className="text-lg font-semibold">{task.title}</h2>
+                          <p className="text-sm text-gray-600">{task.description}</p>
+                          <p className="text-xs text-gray-500">{task.timestamp}</p>
+                          <div className="space-x-2 mt-2">
+                            <button>
+                              {" "}
+                              <Link
+                                to={`/dashboard/recorded-task/${task._id}`}
+                                className="cursor-pointer"
+                              >
+                                <BiMessageSquareEdit size={25} />
+                              </Link>
+                            </button>
+                            <button
+                              className="cursor-pointer"
+                              onClick={() => handelDeleteTask(task._id)}
+                            >
+                              <RiDeleteBack2Line size={25} className="text-red-500" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                {provided.placeholder}
               </div>
-            ))}
-        </div>
-      </div>
+            </div>
+          )}
+        </Droppable>
 
-      {/* In Progress Section */}
-      <div className="w-full">
-        <h1 className="bg-blue-200 text-center py-2 font-bold rounded-md">
-          In Progress
-        </h1>
-        <div className=" my-2 space-y-3 cursor-pointer">
-          {tasks
-            .filter((task) => task.category === "In Progress")
-            .map((task) => (
-              <div
-                key={task.taskID}
-                className="bg-blue-100 p-4 rounded-lg shadow-md"
-              >
-                <h2 className="text-lg font-semibold">{task.title}</h2>
-                <p className="text-sm text-gray-600">{task.description}</p>
-                <p className="text-xs text-gray-500">{task.timestamp}</p>
-                <div className="space-x-2 mt-2">
-                <button>
-                    {" "}
-                    <Link
-                      to={`/dashboard/recorded-task/${task._id}`}
-                      className="cursor-pointer"
+        {/* In Progress Section */}
+        <Droppable droppableId="In Progress">
+          {(provided) => (
+            <div
+              className="w-full"
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              <h1 className="bg-blue-200 text-center py-2 font-bold rounded-md">
+                In Progress
+              </h1>
+              <div className="my-2 space-y-3 cursor-pointer">
+                {tasks
+                  .filter((task) => task.category === "In Progress")
+                  .map((task, index) => (
+                    <Draggable
+                      key={task._id}
+                      draggableId={task._id}
+                      index={index}
                     >
-                      <BiMessageSquareEdit size={25} />
-                    </Link>
-                  </button>
-                  <button
-                    className="cursor-pointer"
-                    onClick={() => handelDeleteTask(task._id)}
-                  >
-                    <RiDeleteBack2Line size={25} className="text-red-500" />
-                  </button>
-                </div>
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className="bg-blue-100 p-4 rounded-lg shadow-md"
+                        >
+                          <h2 className="text-lg font-semibold">{task.title}</h2>
+                          <p className="text-sm text-gray-600">{task.description}</p>
+                          <p className="text-xs text-gray-500">{task.timestamp}</p>
+                          <div className="space-x-2 mt-2">
+                            <button>
+                              {" "}
+                              <Link
+                                to={`/dashboard/recorded-task/${task._id}`}
+                                className="cursor-pointer"
+                              >
+                                <BiMessageSquareEdit size={25} />
+                              </Link>
+                            </button>
+                            <button
+                              className="cursor-pointer"
+                              onClick={() => handelDeleteTask(task._id)}
+                            >
+                              <RiDeleteBack2Line size={25} className="text-red-500" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                {provided.placeholder}
               </div>
-            ))}
-        </div>
-      </div>
+            </div>
+          )}
+        </Droppable>
 
-      {/* Done Section */}
-      <div className="w-full">
-        <h1 className="bg-green-200 text-center py-2 font-bold rounded-md">
-          Done
-        </h1>
-        <div className="my-2 space-y-3 cursor-pointer">
-          {tasks
-            .filter((task) => task.category === "Done")
-            .map((task) => (
-              <div
-                key={task.taskID}
-                className="bg-green-100 p-4 rounded-lg shadow-md"
-              >
-                <h2 className="text-lg font-semibold">{task.title}</h2>
-                <p className="text-sm text-gray-600">{task.description}</p>
-                <p className="text-xs text-gray-500">{task.timestamp}</p>
-                <div className="space-x-2 mt-2">
-                <button>
-                    {" "}
-                    <Link
-                      to={`/dashboard/recorded-task/${task._id}`}
-                      className="cursor-pointer"
+        {/* Done Section */}
+        <Droppable droppableId="Done">
+          {(provided) => (
+            <div
+              className="w-full"
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              <h1 className="bg-green-200 text-center py-2 font-bold rounded-md">
+                Done
+              </h1>
+              <div className="my-2 space-y-3 cursor-pointer">
+                {tasks
+                  .filter((task) => task.category === "Done")
+                  .map((task, index) => (
+                    <Draggable
+                      key={task._id}
+                      draggableId={task._id}
+                      index={index}
                     >
-                      <BiMessageSquareEdit size={25} />
-                    </Link>
-                  </button>
-                  <button
-                    className="cursor-pointer"
-                    onClick={() => handelDeleteTask(task._id)}
-                  >
-                    <RiDeleteBack2Line size={25} className="text-red-500" />
-                  </button>
-                </div>
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className="bg-green-100 p-4 rounded-lg shadow-md"
+                        >
+                          <h2 className="text-lg font-semibold">{task.title}</h2>
+                          <p className="text-sm text-gray-600">{task.description}</p>
+                          <p className="text-xs text-gray-500">{task.timestamp}</p>
+                          <div className="space-x-2 mt-2">
+                            <button>
+                              {" "}
+                              <Link
+                                to={`/dashboard/recorded-task/${task._id}`}
+                                className="cursor-pointer"
+                              >
+                                <BiMessageSquareEdit size={25} />
+                              </Link>
+                            </button>
+                            <button
+                              className="cursor-pointer"
+                              onClick={() => handelDeleteTask(task._id)}
+                            >
+                              <RiDeleteBack2Line size={25} className="text-red-500" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                {provided.placeholder}
               </div>
-            ))}
-        </div>
+            </div>
+          )}
+        </Droppable>
       </div>
-    </div>
+    </DragDropContext>
   );
 };
 
