@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { FormContext } from "../context/LoginContext";
 import { useNavigate } from "react-router-dom";
+import axios  from 'axios';
 const Login = () => {
   const { googleLogin, user, setUser } = useContext(FormContext);
   const navigate = useNavigate();
@@ -14,9 +15,12 @@ const Login = () => {
             name: res.user.displayName,
             photoURL: res.user.photoURL,
         }
+        axios.post(`${import.meta.env.VITE_URL}/user`, obj)
+            .then(res => {
+            console.log(res.data)
+        })
     });
   };
-  console.log(user);
   return (
     <div className="max-w-3xl mx-auto lg:mt-20 md:mt-12 mt-5 grid place-items-center space-y-2">
       <h1 className="text-3xl">
