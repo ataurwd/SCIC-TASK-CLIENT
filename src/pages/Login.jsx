@@ -9,7 +9,7 @@ const Login = () => {
   const handelGoogleLogin = () => {
     googleLogin().then((res) => {
       setUser(res.user);
-        navigate("/dashboard");
+        navigate("/dashboard/add-task");
         const obj = {
             email: res.user.email,
             name: res.user.displayName,

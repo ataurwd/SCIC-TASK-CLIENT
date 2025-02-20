@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { NavLink, Outlet } from "react-router-dom";
-import { TbHome } from "react-icons/tb";
+import { CiCirclePlus } from "react-icons/ci";
+import { GoTasklist } from "react-icons/go";
 const Dashboard = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   return (
@@ -31,13 +32,13 @@ const Dashboard = () => {
               }`
             }
           >
-            <TbHome className={`${isCollapsed ? "" : "md:mr-3"}`} size={24} />
+            <CiCirclePlus className={`${isCollapsed ? "" : "md:mr-3"}`} size={24} />
             <span className="hidden sm:inline">
               {!isCollapsed && "Add Task"}
             </span>
           </NavLink>
         </div>
-        <div className="rounded-md p-4 bg-white md:my-2">
+        <div className="rounded-md p-4 bg-white md:my-2 mt-1">
           <NavLink
             to={"recorded-task"}
             className={({ isActive }) =>
@@ -46,7 +47,7 @@ const Dashboard = () => {
               }`
             }
           >
-            <TbHome className={`${isCollapsed ? "" : "md:mr-3"}`} size={24} />
+            <GoTasklist className={`${isCollapsed ? "" : "md:mr-3"}`} size={24} />
             <span className="hidden sm:inline">
               {!isCollapsed && "Recorded Task"}
             </span>

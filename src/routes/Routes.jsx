@@ -6,6 +6,7 @@ import Add from './../pages/Add';
 import Recorded from './../pages/Recorded';
 import Edit from '../pages/Edit';
 import Nothing from './../pages/Recorded';
+import PrivateRoute from './PrivateRoute';
 
 const Routes = () => {
     const route = new createBrowserRouter([
@@ -14,15 +15,15 @@ const Routes = () => {
             element: <Login/>
         }, {
             path: 'dashboard',
-            element: <Dashboard />,
+            element: <PrivateRoute><Dashboard /></PrivateRoute>,
             children: [
                 {
                     path: 'add-task',
-                    element: <Add/>
+                    element: <PrivateRoute><Add/></PrivateRoute>
                 },
                 {
                     path: 'recorded-task',
-                    element: <Recorded/>
+                    element: <PrivateRoute><Recorded/></PrivateRoute>
                 },
                 {
                     path: 'recorded-task/:id',
