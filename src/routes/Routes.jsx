@@ -15,15 +15,15 @@ const Routes = () => {
             element: <Login/>
         }, {
             path: 'dashboard',
-            element: <PrivateRoute><Dashboard /></PrivateRoute>,
+            element: <Dashboard />,
             children: [
                 {
                     path: 'add-task',
-                    element: <PrivateRoute><Add/></PrivateRoute>
+                    element: <><Add/></>
                 },
                 {
                     path: 'recorded-task',
-                    element: <PrivateRoute><Recorded/></PrivateRoute>
+                    element: <><Recorded/></>
                 },
                 {
                     path: 'recorded-task/:id',

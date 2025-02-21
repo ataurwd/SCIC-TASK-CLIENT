@@ -17,20 +17,20 @@ const Recorded = () => {
     queryKey: ["recorded"],
     queryFn: async () => {
       const response = await axios.get(
-        `${import.meta.env.VITE_URL}/tasks/${user?.email}`
+        `${import.meta.env.VITE_URL}/tasks/user/${user?.email}`
       );
       return response.data;
     },
   });
 
-  if (isLoading && loading) {
+  if (isLoading && user?.email) {
     return <div>Loading...</div>;
   }
 
   // delete task
   const handelDeleteTask = async (id) => {
     await axios
-      .delete(`${import.meta.env.VITE_URL}/tasks/${id}`)
+      .delete(`${import.meta.env.VITE_URL}/tasks/delete/${id}`)
       .then((res) => {
         console.log(res.data);
         refetch();
@@ -60,7 +60,7 @@ const Recorded = () => {
 
     // Update the task on the server
     axios
-      .put(`${import.meta.env.VITE_URL}/tasks/${draggableId}`, task)
+      .put(`${import.meta.env.VITE_URL}/tasks/category/${draggableId}`, task)
       .then(() => {
         refetch();
       });

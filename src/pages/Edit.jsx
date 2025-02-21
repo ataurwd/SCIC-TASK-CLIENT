@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 
 const Edit = () => {
   const data = useLoaderData();
-  const navigate = useNavigate(); // To navigate after the update
+  const navigate = useNavigate(); 
 
   const handelUpdate = async (e) => {
     e.preventDefault();
@@ -16,7 +16,7 @@ const Edit = () => {
     const updateObj = { title, description, category };
 
     const response = await axios.patch(
-      `${import.meta.env.VITE_URL}/tasks/${data._id}`,
+      `${import.meta.env.VITE_URL}/tasks/update/${data._id}`,
       updateObj
     );
     if (response.data) {

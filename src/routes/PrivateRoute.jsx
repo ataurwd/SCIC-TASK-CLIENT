@@ -5,7 +5,6 @@ import { FormContext } from "../context/LoginContext";
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useContext(FormContext);
-  const location = useLocation();
   if (loading) {
     return (
       <div className="w-10 h-10 mx-auto mt-[50vh]">
@@ -24,6 +23,6 @@ const PrivateRoute = ({ children }) => {
   if (!user) {
     toast.error("Please Login To See Details");
   }
-  return <Navigate state={location.pathname} to="/" />;
+  return <Navigate to="/" />;
 };
 export default PrivateRoute;
